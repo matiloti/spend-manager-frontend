@@ -63,15 +63,54 @@ export interface CreateTransactionRequest {
   categoryId: string;
   type: "EXPENSE" | "INCOME";
   amount: number;
-  date: string;
+  date?: string;
   description?: string;
   tagIds?: string[];
 }
 
 export interface UpdateTransactionRequest {
-  categoryId?: string;
-  amount?: number;
-  date?: string;
+  accountId?: string;
+  categoryId: string;
+  type: "EXPENSE" | "INCOME";
+  amount: number;
+  date: string;
   description?: string;
   tagIds?: string[];
+}
+
+export interface ListTransactionsParams {
+  accountId: string;
+  type?: "EXPENSE" | "INCOME";
+  date?: string;
+  startDate?: string;
+  endDate?: string;
+  categoryId?: string;
+  tagIds?: string;
+  search?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface BulkDeleteTransactionsRequest {
+  transactionIds: string[];
+}
+
+export interface BulkDeleteTransactionsResponse {
+  deletedCount: number;
+  failedIds: string[];
+}
+
+export interface CreateTagRequest {
+  name: string;
+}
+
+export interface UpdateTagRequest {
+  name: string;
+}
+
+export interface ListTagsParams {
+  search?: string;
+  page?: number;
+  size?: number;
 }

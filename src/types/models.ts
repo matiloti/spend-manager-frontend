@@ -61,6 +61,19 @@ export interface SeedCategoriesResponse {
   message: string;
 }
 
+export interface AccountSummary {
+  id: string;
+  name: string;
+}
+
+export interface CategorySummary {
+  id: string;
+  name: string;
+  icon: string;
+  colorCode: string;
+  type: CategoryType;
+}
+
 export interface Transaction {
   id: string;
   accountId: string;
@@ -72,14 +85,33 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
   // Populated from relations
-  category?: Category;
+  account?: AccountSummary;
+  category?: CategorySummary;
   tags?: Tag[];
+}
+
+export interface TransactionListSummary {
+  totalExpenses: number;
+  totalIncome: number;
+  transactionCount: number;
+}
+
+export interface TransactionListResponse {
+  content: Transaction[];
+  page: {
+    number: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+  };
+  summary: TransactionListSummary;
 }
 
 export interface Tag {
   id: string;
   name: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface User {
