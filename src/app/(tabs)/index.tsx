@@ -1,14 +1,7 @@
 import React, { useCallback, useMemo } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  RefreshControl,
-  Pressable,
-  SafeAreaView,
-} from "react-native";
+import { View, Text, FlatList, RefreshControl, SafeAreaView } from "react-native";
 import { useRouter } from "expo-router";
-import { Plus, Wallet } from "lucide-react-native";
+import { Wallet } from "lucide-react-native";
 import { AccountSelector } from "@/components/account/AccountSelector";
 import {
   WeekNavigator,
@@ -16,6 +9,7 @@ import {
   DailySummaryCard,
   MonthlySummaryCard,
   TransactionQuickView,
+  ExpandableFAB,
 } from "@/components/home";
 import { LoadingState } from "@/components/layout/LoadingState";
 import { ErrorState } from "@/components/layout/ErrorState";
@@ -27,12 +21,10 @@ import {
 } from "@/hooks/api/useHome";
 import { useActiveAccount } from "@/hooks/api/useAccounts";
 import { useHomeStore } from "@/stores/homeStore";
-import { useQueryClient } from "@tanstack/react-query";
 import { TransactionSummary } from "@/services/homeService";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   // Global state
   const {
@@ -129,8 +121,12 @@ export default function HomeScreen() {
     [router]
   );
 
-  const handleAddTransaction = useCallback(() => {
-    router.push("/transactions/create");
+  const handleAddExpense = useCallback(() => {
+    router.push("/transactions/create?type=EXPENSE");
+  }, [router]);
+
+  const handleAddIncome = useCallback(() => {
+    router.push("/transactions/create?type=INCOME");
   }, [router]);
 
   const handleCreateAccount = useCallback(() => {
@@ -261,12 +257,9 @@ export default function HomeScreen() {
       <Text className="text-gray-400 text-center">
         No transactions for this day
       </Text>
-      <Pressable
-        onPress={handleAddTransaction}
-        className="mt-4 bg-primary-50 px-4 py-2 rounded-lg"
-      >
-        <Text className="text-primary-600 font-medium">Add Transaction</Text>
-      </Pressable>
+      <Text className="text-gray-400 text-center mt-2">
+        Tap the + button to add one
+      </Text>
     </View>
   );
 
@@ -316,16 +309,12 @@ export default function HomeScreen() {
         )}
       />
 
-      {/* FAB for adding transactions */}
-      <Pressable
-        onPress={handleAddTransaction}
-        className="absolute bottom-24 right-4 w-14 h-14 bg-primary-500 rounded-full items-center justify-center shadow-lg active:bg-primary-600"
-        accessibilityLabel="Add transaction"
-        accessibilityRole="button"
+      {/* Expandable FAB for adding transactions */}
+      <ExpandableFAB
+        onAddExpense={handleAddExpense}
+        onAddIncome={handleAddIncome}
         testID="add-transaction-fab"
-      >
-        <Plus size={28} color="#FFFFFF" />
-      </Pressable>
+      />
     </SafeAreaView>
   );
 }

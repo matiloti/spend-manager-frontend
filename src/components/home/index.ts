@@ -3,3 +3,4 @@ export { BalanceBar } from "./BalanceBar";
 export { DailySummaryCard } from "./DailySummaryCard";
 export { MonthlySummaryCard } from "./MonthlySummaryCard";
 export { TransactionQuickView } from "./TransactionQuickView";
+export { ExpandableFAB } from "./ExpandableFAB";

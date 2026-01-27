@@ -157,6 +157,8 @@ jest.mock("lucide-react-native", () => {
     FileText: createMockIcon("FileText"),
     DollarSign: createMockIcon("DollarSign"),
     Hash: createMockIcon("Hash"),
+    ArrowUpCircle: createMockIcon("ArrowUpCircle"),
+    ArrowDownCircle: createMockIcon("ArrowDownCircle"),
   };
 });
 
@@ -179,6 +181,33 @@ jest.mock("@react-native-community/datetimepicker", () => {
     default: DateTimePicker,
   };
 });
+
+// Mock expo-blur
+jest.mock("expo-blur", () => {
+  const mockReact = require("react");
+  const mockView = require("react-native").View;
+  return {
+    BlurView: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, { ...props, testID: props.testID || "blur-view" }),
+  };
+});
+
+// Mock expo-haptics
+jest.mock("expo-haptics", () => ({
+  impactAsync: jest.fn(() => Promise.resolve()),
+  notificationAsync: jest.fn(() => Promise.resolve()),
+  selectionAsync: jest.fn(() => Promise.resolve()),
+  ImpactFeedbackStyle: {
+    Light: "light",
+    Medium: "medium",
+    Heavy: "heavy",
+  },
+  NotificationFeedbackType: {
+    Success: "success",
+    Warning: "warning",
+    Error: "error",
+  },
+}));
 
 // Mock victory-native charts
 jest.mock("victory-native", () => {
