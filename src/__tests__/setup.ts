@@ -53,6 +53,13 @@ jest.mock("react-native-reanimated", () => {
   };
 });
 
+// Mock expo-secure-store
+jest.mock("expo-secure-store", () => ({
+  setItemAsync: jest.fn(() => Promise.resolve()),
+  getItemAsync: jest.fn(() => Promise.resolve(null)),
+  deleteItemAsync: jest.fn(() => Promise.resolve()),
+}));
+
 // Mock lucide-react-native icons
 jest.mock("lucide-react-native", () => {
   const mockReact = require("react");
@@ -65,6 +72,9 @@ jest.mock("lucide-react-native", () => {
 
   return {
     Check: createMockIcon("Check"),
+    Eye: createMockIcon("Eye"),
+    EyeOff: createMockIcon("EyeOff"),
+    LogOut: createMockIcon("LogOut"),
     ChevronDown: createMockIcon("ChevronDown"),
     ChevronUp: createMockIcon("ChevronUp"),
     ChevronLeft: createMockIcon("ChevronLeft"),
