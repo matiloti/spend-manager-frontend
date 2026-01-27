@@ -5,6 +5,9 @@ import {
   ActivityIndicator,
   PressableProps,
   View,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
 } from "react-native";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
@@ -48,6 +51,35 @@ const textSizeStyles: Record<ButtonSize, string> = {
   lg: "text-lg",
 };
 
+// Fallback styles for when NativeWind fails
+const fallbackVariantStyles: Record<ButtonVariant, ViewStyle> = {
+  primary: { backgroundColor: "#3B82F6" },
+  secondary: { backgroundColor: "#F3F4F6" },
+  outline: { backgroundColor: "transparent", borderWidth: 1, borderColor: "#D1D5DB" },
+  ghost: { backgroundColor: "transparent" },
+  danger: { backgroundColor: "#EF4444" },
+};
+
+const fallbackVariantTextStyles: Record<ButtonVariant, TextStyle> = {
+  primary: { color: "#FFFFFF" },
+  secondary: { color: "#374151" },
+  outline: { color: "#374151" },
+  ghost: { color: "#374151" },
+  danger: { color: "#FFFFFF" },
+};
+
+const fallbackSizeStyles: Record<ButtonSize, ViewStyle> = {
+  sm: { paddingHorizontal: 12, paddingVertical: 8 },
+  md: { paddingHorizontal: 16, paddingVertical: 12 },
+  lg: { paddingHorizontal: 24, paddingVertical: 16 },
+};
+
+const fallbackTextSizeStyles: Record<ButtonSize, TextStyle> = {
+  sm: { fontSize: 14 },
+  md: { fontSize: 16 },
+  lg: { fontSize: 18 },
+};
+
 export function Button({
   variant = "primary",
   size = "md",
@@ -63,6 +95,13 @@ export function Button({
 
   return (
     <Pressable
+      style={[
+        styles.base,
+        fallbackVariantStyles[variant],
+        fallbackSizeStyles[size],
+        isDisabled && styles.disabled,
+        fullWidth && styles.fullWidth,
+      ]}
       className={`
         flex-row items-center justify-center rounded-xl
         ${variantStyles[variant]}
@@ -81,9 +120,10 @@ export function Button({
           size="small"
         />
       ) : (
-        <View className="flex-row items-center gap-2">
+        <View style={styles.content} className="flex-row items-center gap-2">
           {leftIcon}
           <Text
+            style={[styles.text, fallbackVariantTextStyles[variant], fallbackTextSizeStyles[size]]}
             className={`font-semibold ${variantTextStyles[variant]} ${textSizeStyles[size]}`}
           >
             {children}
@@ -94,5 +134,28 @@ export function Button({
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  base: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+  },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  text: {
+    fontWeight: "600",
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  fullWidth: {
+    width: "100%",
+  },
+});
 
 export default Button;

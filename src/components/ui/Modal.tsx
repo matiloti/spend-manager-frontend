@@ -5,6 +5,7 @@ import {
   Text,
   Pressable,
   ModalProps as RNModalProps,
+  StyleSheet,
 } from "react-native";
 import { X } from "lucide-react-native";
 
@@ -34,16 +35,24 @@ export function Modal({
       {...props}
     >
       <Pressable
+        style={styles.backdrop}
         className="flex-1 bg-black/50 justify-center items-center px-4"
         onPress={onClose}
       >
         <Pressable
+          style={styles.container}
           className="bg-white rounded-2xl w-full max-w-md overflow-hidden"
           onPress={(e) => e.stopPropagation()}
         >
           {(title || showCloseButton) && (
-            <View className="flex-row items-center justify-between p-4 border-b border-gray-100">
-              <Text className="text-lg font-semibold text-gray-900">
+            <View
+              style={styles.header}
+              className="flex-row items-center justify-between p-4 border-b border-gray-100"
+            >
+              <Text
+                style={styles.title}
+                className="text-lg font-semibold text-gray-900"
+              >
                 {title || ""}
               </Text>
               {showCloseButton && (
@@ -58,11 +67,47 @@ export function Modal({
               )}
             </View>
           )}
-          <View className="p-4">{children}</View>
+          <View style={styles.content} className="p-4">
+            {children}
+          </View>
         </Pressable>
       </Pressable>
     </RNModal>
   );
 }
+
+// Fallback styles to ensure Modal works even if NativeWind fails
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+  container: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    width: "100%",
+    maxWidth: 448,
+    overflow: "hidden",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#111827",
+  },
+  content: {
+    padding: 16,
+  },
+});
 
 export default Modal;
