@@ -66,6 +66,7 @@ jest.mock("lucide-react-native", () => {
   return {
     Check: createMockIcon("Check"),
     ChevronDown: createMockIcon("ChevronDown"),
+    ChevronUp: createMockIcon("ChevronUp"),
     ChevronLeft: createMockIcon("ChevronLeft"),
     ChevronRight: createMockIcon("ChevronRight"),
     Plus: createMockIcon("Plus"),
@@ -155,6 +156,7 @@ jest.mock("lucide-react-native", () => {
     Filter: createMockIcon("Filter"),
     FileText: createMockIcon("FileText"),
     DollarSign: createMockIcon("DollarSign"),
+    Hash: createMockIcon("Hash"),
   };
 });
 
@@ -163,3 +165,27 @@ jest.mock("nativewind", () => ({
   styled: (component: unknown) => component,
   useColorScheme: () => ({ colorScheme: "light", setColorScheme: jest.fn() }),
 }));
+
+// Mock victory-native charts
+jest.mock("victory-native", () => {
+  const mockReact = require("react");
+  const mockView = require("react-native").View;
+
+  return {
+    VictoryPie: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, { ...props, testID: "victory-pie" }),
+    VictoryChart: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, { ...props, testID: "victory-chart" }),
+    VictoryLine: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, { ...props, testID: "victory-line" }),
+    VictoryBar: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, { ...props, testID: "victory-bar" }),
+    VictoryAxis: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, { ...props, testID: "victory-axis" }),
+    VictoryTheme: { material: {} },
+    VictoryVoronoiContainer: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, props),
+    VictoryTooltip: (props: Record<string, unknown>) =>
+      mockReact.createElement(mockView, props),
+  };
+});
