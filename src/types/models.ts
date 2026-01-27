@@ -110,8 +110,36 @@ export interface TransactionListResponse {
 export interface Tag {
   id: string;
   name: string;
+  colorCode: string;
+  transactionCount?: number;
+  totalExpenses?: number;
+  totalIncome?: number;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
+}
+
+export interface TagSummary {
+  id: string;
+  name: string;
+  colorCode: string;
+}
+
+export interface TagColor {
+  code: string;
+  name: string;
+}
+
+export interface TagColorsResponse {
+  colors: TagColor[];
+}
+
+export interface DeleteTagResponse {
+  deletedTagId: string;
+  deletedTagName: string;
+  action: "remove" | "reassign";
+  affectedTransactions: number;
+  replacementTagId?: string;
+  replacementTagName?: string;
 }
 
 export interface User {

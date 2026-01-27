@@ -103,14 +103,22 @@ export interface BulkDeleteTransactionsResponse {
 
 export interface CreateTagRequest {
   name: string;
+  colorCode?: string;
 }
 
 export interface UpdateTagRequest {
   name: string;
+  colorCode?: string;
 }
 
 export interface ListTagsParams {
   search?: string;
   page?: number;
   size?: number;
+  sort?: string;
+}
+
+export interface DeleteTagParams {
+  action?: "remove" | "reassign";
+  replacementTagId?: string;
 }

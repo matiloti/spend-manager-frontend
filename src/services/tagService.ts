@@ -1,10 +1,11 @@
 import api from "./api";
-import { Tag } from "@/types/models";
+import { Tag, TagColorsResponse, DeleteTagResponse } from "@/types/models";
 import {
   PageResponse,
   CreateTagRequest,
   UpdateTagRequest,
   ListTagsParams,
+  DeleteTagParams,
 } from "@/types/api";
 
 export const tagService = {
@@ -41,10 +42,26 @@ export const tagService = {
   },
 
   /**
-   * Delete a tag
+   * Delete a tag with optional reassignment
+   * @param id - Tag ID to delete
+   * @param params - Optional action and replacement tag ID
    */
-  delete: async (id: string): Promise<void> => {
-    await api.delete(`/tags/${id}`);
+  delete: async (
+    id: string,
+    params?: DeleteTagParams
+  ): Promise<DeleteTagResponse> => {
+    const response = await api.delete<DeleteTagResponse>(`/tags/${id}`, {
+      params,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get predefined color palette for tags
+   */
+  getColors: async (): Promise<TagColorsResponse> => {
+    const response = await api.get<TagColorsResponse>("/tags/colors");
+    return response.data;
   },
 };
 

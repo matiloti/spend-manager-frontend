@@ -21,8 +21,8 @@ const mockExpenseTransaction: Transaction = {
     type: "EXPENSE",
   },
   tags: [
-    { id: "tag-1", name: "work", createdAt: "2026-01-01T00:00:00Z" },
-    { id: "tag-2", name: "coffee", createdAt: "2026-01-01T00:00:00Z" },
+    { id: "tag-1", name: "work", colorCode: "#3B82F6", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z" },
+    { id: "tag-2", name: "coffee", colorCode: "#F97316", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z" },
   ],
 };
 
@@ -94,11 +94,11 @@ describe("TransactionCard", () => {
     const transactionWithManyTags: Transaction = {
       ...mockExpenseTransaction,
       tags: [
-        { id: "1", name: "tag1", createdAt: "2026-01-01T00:00:00Z" },
-        { id: "2", name: "tag2", createdAt: "2026-01-01T00:00:00Z" },
-        { id: "3", name: "tag3", createdAt: "2026-01-01T00:00:00Z" },
-        { id: "4", name: "tag4", createdAt: "2026-01-01T00:00:00Z" },
-        { id: "5", name: "tag5", createdAt: "2026-01-01T00:00:00Z" },
+        { id: "1", name: "tag1", colorCode: "#3B82F6", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z" },
+        { id: "2", name: "tag2", colorCode: "#22C55E", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z" },
+        { id: "3", name: "tag3", colorCode: "#EF4444", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z" },
+        { id: "4", name: "tag4", colorCode: "#F97316", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z" },
+        { id: "5", name: "tag5", colorCode: "#8B5CF6", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z" },
       ],
     };
     const { getByText, queryByText } = render(

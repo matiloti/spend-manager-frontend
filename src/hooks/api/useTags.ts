@@ -5,12 +5,13 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import tagService from "@/services/tagService";
-import { Tag } from "@/types/models";
+import { Tag, TagColorsResponse, DeleteTagResponse } from "@/types/models";
 import {
   PageResponse,
   CreateTagRequest,
   UpdateTagRequest,
   ListTagsParams,
+  DeleteTagParams,
   ApiError,
 } from "@/types/api";
 
@@ -21,6 +22,7 @@ export const tagKeys = {
   list: (params?: ListTagsParams) => [...tagKeys.lists(), params] as const,
   details: () => [...tagKeys.all, "detail"] as const,
   detail: (id: string) => [...tagKeys.details(), id] as const,
+  colors: () => [...tagKeys.all, "colors"] as const,
 };
 
 /**
@@ -56,6 +58,23 @@ export function useTag(
 }
 
 /**
+ * Hook to fetch available tag colors
+ */
+export function useTagColors(
+  options?: Omit<
+    UseQueryOptions<TagColorsResponse, ApiError>,
+    "queryKey" | "queryFn"
+  >
+) {
+  return useQuery({
+    queryKey: tagKeys.colors(),
+    queryFn: () => tagService.getColors(),
+    staleTime: 24 * 60 * 60 * 1000, // Colors rarely change, cache for 24 hours
+    ...options,
+  });
+}
+
+/**
  * Hook to create a new tag
  */
 export function useCreateTag() {
@@ -85,14 +104,18 @@ export function useUpdateTag() {
 }
 
 /**
- * Hook to delete a tag
+ * Hook to delete a tag with optional reassignment
  */
 export function useDeleteTag() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, ApiError, string>({
-    mutationFn: tagService.delete,
-    onSuccess: (_, id) => {
+  return useMutation<
+    DeleteTagResponse,
+    ApiError,
+    { id: string; params?: DeleteTagParams }
+  >({
+    mutationFn: ({ id, params }) => tagService.delete(id, params),
+    onSuccess: (_, { id }) => {
       queryClient.removeQueries({ queryKey: tagKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: tagKeys.lists() });
     },
