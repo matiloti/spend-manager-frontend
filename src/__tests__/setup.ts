@@ -43,8 +43,12 @@ jest.mock("react-native-reanimated", () => {
     runOnJS: jest.fn((fn) => fn),
     useAnimatedGestureHandler: jest.fn(),
     Easing: {
-      linear: jest.fn(),
-      ease: jest.fn(),
+      linear: jest.fn((x) => x),
+      ease: jest.fn((x) => x),
+      out: jest.fn((fn) => fn),
+      cubic: jest.fn((x) => x),
+      in: jest.fn((fn) => fn),
+      inOut: jest.fn((fn) => fn),
     },
   };
 });
@@ -71,6 +75,7 @@ jest.mock("lucide-react-native", () => {
     AlertTriangle: createMockIcon("AlertTriangle"),
     TrendingUp: createMockIcon("TrendingUp"),
     TrendingDown: createMockIcon("TrendingDown"),
+    Minus: createMockIcon("Minus"),
     Edit3: createMockIcon("Edit3"),
     Trash2: createMockIcon("Trash2"),
     CheckCircle: createMockIcon("CheckCircle"),
