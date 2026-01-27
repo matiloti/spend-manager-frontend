@@ -218,14 +218,14 @@ export default function SettingsScreen() {
             icon={<User size={20} color="#64748B" />}
             title="Profile"
             subtitle="Your personal information"
-            disabled
+            onPress={() => router.push("/settings/profile" as any)}
           />
           <View className="h-px bg-gray-100 mx-4" />
           <SettingsItem
             icon={<Shield size={20} color="#EF4444" />}
             title="Security"
             subtitle="Password and authentication"
-            disabled
+            onPress={() => router.push("/settings/security" as any)}
           />
           <View className="h-px bg-gray-100 mx-4" />
           <SettingsItem
