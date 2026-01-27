@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { InternalAxiosRequestConfig } from "axios";
 import Constants from "expo-constants";
 import { camelizeKeys, decamelizeKeys } from "humps";
+import { useAuthStore } from "@/stores/authStore";
 
 const API_BASE_URL =
   Constants.expoConfig?.extra?.apiUrl || "http://localhost:8080/api/v1";
@@ -13,14 +14,46 @@ const api = axios.create({
   },
 });
 
-// Request interceptor - transforms camelCase to snake_case for backend
+// Endpoints that don't require authentication
+const PUBLIC_ENDPOINTS = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/refresh",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+];
+
+// Check if endpoint is public
+function isPublicEndpoint(url: string | undefined): boolean {
+  if (!url) return false;
+  return PUBLIC_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+}
+
+// Request interceptor - transforms camelCase to snake_case and adds auth
 api.interceptors.request.use(
-  (config) => {
-    // Add auth token if available (future)
-    // const token = getToken();
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+  async (config: InternalAxiosRequestConfig) => {
+    // Add auth token if available and endpoint requires auth
+    if (!isPublicEndpoint(config.url)) {
+      const authStore = useAuthStore.getState();
+
+      // Check if we need to refresh the token
+      if (authStore.isAuthenticated && authStore.shouldRefreshToken()) {
+        // Don't refresh if we're already calling refresh endpoint
+        if (!config.url?.includes("/auth/refresh")) {
+          const success = await authStore.refreshAccessToken();
+          if (!success) {
+            // Token refresh failed, clear auth
+            await authStore.clearAuth();
+          }
+        }
+      }
+
+      // Get current access token after potential refresh
+      const accessToken = useAuthStore.getState().accessToken;
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    }
 
     // Transform request body from camelCase to snake_case
     if (config.data) {
@@ -48,22 +81,39 @@ api.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
+  async (error) => {
     if (error.response) {
       // Server responded with error status
-      const { status, data } = error.response;
+      const { status, data, config } = error.response;
 
-      if (status === 401) {
-        // Handle unauthorized (future: redirect to login)
-        console.log("Unauthorized - session expired");
+      // Handle 401 errors - potential session expiry
+      if (status === 401 && !isPublicEndpoint(config.url)) {
+        const authStore = useAuthStore.getState();
+        const errorCode = data?.error?.code || data?.code;
+
+        // If token reuse detected or refresh token invalid, clear auth
+        if (
+          errorCode === "TOKEN_REUSE_DETECTED" ||
+          errorCode === "INVALID_REFRESH_TOKEN" ||
+          errorCode === "TOKEN_EXPIRED"
+        ) {
+          console.log("Auth token invalid - clearing session");
+          await authStore.clearAuth();
+        }
       }
+
+      // Transform error data from snake_case to camelCase
+      const errorData = data ? camelizeKeys(data) : {};
+
+      // Handle nested error structure from backend
+      const errorObj = (errorData as { error?: { code?: string; message?: string; details?: unknown[] } }).error || errorData;
 
       // Return structured error
       return Promise.reject({
         status,
-        code: data?.code || "UNKNOWN_ERROR",
-        message: data?.message || "An unexpected error occurred",
-        details: data?.details,
+        code: (errorObj as { code?: string }).code || "UNKNOWN_ERROR",
+        message: (errorObj as { message?: string }).message || "An unexpected error occurred",
+        details: (errorObj as { details?: unknown[] }).details,
       });
     } else if (error.request) {
       // Network error
