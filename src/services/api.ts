@@ -1,5 +1,6 @@
 import axios from "axios";
 import Constants from "expo-constants";
+import { camelizeKeys, decamelizeKeys } from "humps";
 
 const API_BASE_URL =
   Constants.expoConfig?.extra?.apiUrl || "http://localhost:8080/api/v1";
@@ -12,7 +13,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor
+// Request interceptor - transforms camelCase to snake_case for backend
 api.interceptors.request.use(
   (config) => {
     // Add auth token if available (future)
@@ -20,6 +21,17 @@ api.interceptors.request.use(
     // if (token) {
     //   config.headers.Authorization = `Bearer ${token}`;
     // }
+
+    // Transform request body from camelCase to snake_case
+    if (config.data) {
+      config.data = decamelizeKeys(config.data);
+    }
+
+    // Transform query params from camelCase to snake_case
+    if (config.params) {
+      config.params = decamelizeKeys(config.params);
+    }
+
     return config;
   },
   (error) => {
@@ -27,9 +39,15 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor - transforms snake_case to camelCase for frontend
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Transform response data from snake_case to camelCase
+    if (response.data) {
+      response.data = camelizeKeys(response.data);
+    }
+    return response;
+  },
   (error) => {
     if (error.response) {
       // Server responded with error status

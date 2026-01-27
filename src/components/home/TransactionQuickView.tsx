@@ -34,7 +34,7 @@ export function TransactionQuickView({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center py-3 px-4 bg-white active:bg-gray-50"
+      className="flex-row items-center py-3 px-4 bg-white active:bg-gray-50 min-h-touch"
       accessibilityRole="button"
       accessibilityLabel={`${type} ${formatCurrency(amount)} for ${category.name}`}
       testID={testID}
