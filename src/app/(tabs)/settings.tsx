@@ -99,7 +99,7 @@ export default function SettingsScreen() {
             icon={<Tag size={20} color="#F97316" />}
             title="Tags"
             subtitle="Add custom labels"
-            disabled
+            onPress={() => router.push("/tags")}
           />
         </SettingsSection>
 
@@ -109,7 +109,7 @@ export default function SettingsScreen() {
             icon={<Bell size={20} color="#8B5CF6" />}
             title="Notifications"
             subtitle="Alerts and reminders"
-            disabled
+            onPress={() => router.push("/settings/notifications" as any)}
           />
         </SettingsSection>
 
