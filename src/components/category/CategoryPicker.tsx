@@ -13,6 +13,7 @@ interface CategoryPickerProps {
   label?: string;
   error?: string;
   placeholder?: string;
+  testID?: string;
 }
 
 export function CategoryPicker({
@@ -22,6 +23,7 @@ export function CategoryPicker({
   label,
   error,
   placeholder = "Select category",
+  testID,
 }: CategoryPickerProps) {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -85,7 +87,7 @@ export function CategoryPicker({
     : null;
 
   return (
-    <View className="w-full">
+    <View className="w-full" testID={testID}>
       {label && (
         <Text className="text-sm font-medium text-gray-700 mb-2">{label}</Text>
       )}
@@ -97,6 +99,7 @@ export function CategoryPicker({
         }`}
         accessibilityLabel="Select category"
         accessibilityRole="button"
+        testID={testID ? `${testID}-trigger` : undefined}
       >
         {selectedCategory ? (
           <>
