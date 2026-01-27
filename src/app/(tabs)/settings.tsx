@@ -92,7 +92,7 @@ export default function SettingsScreen() {
             icon={<FolderOpen size={20} color="#22C55E" />}
             title="Categories"
             subtitle="Organize your transactions"
-            disabled
+            onPress={() => router.push("/categories")}
           />
           <View className="h-px bg-gray-100 mx-4" />
           <SettingsItem

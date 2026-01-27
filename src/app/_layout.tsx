@@ -28,6 +28,10 @@ export default function RootLayout() {
           <Stack.Screen name="accounts/create" options={{ headerShown: false }} />
           <Stack.Screen name="accounts/[id]/index" options={{ headerShown: false }} />
           <Stack.Screen name="accounts/[id]/edit" options={{ headerShown: false }} />
+          <Stack.Screen name="categories/index" options={{ headerShown: false }} />
+          <Stack.Screen name="categories/create" options={{ headerShown: false }} />
+          <Stack.Screen name="categories/[id]/index" options={{ headerShown: false }} />
+          <Stack.Screen name="categories/[id]/edit" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </QueryClientProvider>

@@ -48,8 +48,14 @@ export interface UpdateAccountRequest {
 export interface CreateCategoryRequest {
   name: string;
   icon: string;
-  colorCode?: string;
+  colorCode: string;
   type: "EXPENSE" | "INCOME";
+}
+
+export interface UpdateCategoryRequest {
+  name: string;
+  icon: string;
+  colorCode: string;
 }
 
 export interface CreateTransactionRequest {

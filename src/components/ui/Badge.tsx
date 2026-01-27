@@ -1,7 +1,15 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-type BadgeVariant = "default" | "primary" | "success" | "warning" | "error";
+type BadgeVariant =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "error"
+  | "expense"
+  | "income";
 type BadgeSize = "sm" | "md";
 
 interface BadgeProps {
@@ -13,17 +21,23 @@ interface BadgeProps {
 const variantStyles: Record<BadgeVariant, string> = {
   default: "bg-gray-100",
   primary: "bg-primary-100",
+  secondary: "bg-gray-100",
   success: "bg-income-light",
   warning: "bg-yellow-100",
   error: "bg-expense-light",
+  expense: "bg-expense-light",
+  income: "bg-income-light",
 };
 
 const variantTextStyles: Record<BadgeVariant, string> = {
   default: "text-gray-700",
   primary: "text-primary-700",
+  secondary: "text-gray-600",
   success: "text-income-dark",
   warning: "text-yellow-700",
   error: "text-expense-dark",
+  expense: "text-expense",
+  income: "text-income",
 };
 
 const sizeStyles: Record<BadgeSize, string> = {
