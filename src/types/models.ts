@@ -3,6 +3,12 @@
 export type TransactionType = "EXPENSE" | "INCOME";
 export type CategoryType = "EXPENSE" | "INCOME";
 
+export interface BalanceSummary {
+  totalIncome: number;
+  totalExpenses: number;
+  netBalance: number;
+}
+
 export interface Account {
   id: string;
   name: string;
@@ -12,9 +18,8 @@ export interface Account {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  balance?: number;
-  totalIncome?: number;
-  totalExpenses?: number;
+  balance?: BalanceSummary;
+  transactionCount?: number;
 }
 
 export interface Category {
