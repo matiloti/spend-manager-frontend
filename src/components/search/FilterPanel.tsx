@@ -19,8 +19,18 @@ import { Category, Tag, TransactionType } from "@/types/models";
 import { useCategories } from "@/hooks/api/useCategories";
 import { useTags } from "@/hooks/api/useTags";
 import { getCategoryIcon } from "@/constants/icons";
-import { DatePicker } from "@/components/forms/DatePicker";
-import { formatDate, formatDateISO } from "@/utils/formatters";
+import { InlineCalendar } from "@/components/forms/InlineCalendar";
+import { formatDate } from "@/utils/formatters";
+
+// Transaction type filter options - defined outside component to prevent recreation
+const TRANSACTION_TYPE_OPTIONS: Array<{
+  label: string;
+  value: TransactionType | null;
+}> = [
+  { label: "All", value: null },
+  { label: "Expense", value: "EXPENSE" },
+  { label: "Income", value: "INCOME" },
+];
 
 export interface SearchFilters {
   categoryIds: string[];
@@ -96,7 +106,10 @@ export function FilterPanel({
 
   const handleTypeChange = useCallback(
     (type: TransactionType | null) => {
-      onFiltersChange({ ...filters, transactionType: type });
+      // Only update if the type actually changed to avoid unnecessary re-renders
+      if (filters.transactionType !== type) {
+        onFiltersChange({ ...filters, transactionType: type });
+      }
     },
     [filters, onFiltersChange]
   );
@@ -104,6 +117,7 @@ export function FilterPanel({
   const handleStartDateChange = useCallback(
     (date: Date) => {
       onFiltersChange({ ...filters, startDate: date });
+      // Close modal after selection for better UX
       setShowStartDatePicker(false);
     },
     [filters, onFiltersChange]
@@ -112,9 +126,21 @@ export function FilterPanel({
   const handleEndDateChange = useCallback(
     (date: Date) => {
       onFiltersChange({ ...filters, endDate: date });
+      // Close modal after selection for better UX
       setShowEndDatePicker(false);
     },
     [filters, onFiltersChange]
+  );
+
+  // Memoize default dates to prevent creating new Date objects on each render
+  const startDateValue = useMemo(
+    () => filters.startDate || new Date(),
+    [filters.startDate]
+  );
+
+  const endDateValue = useMemo(
+    () => filters.endDate || new Date(),
+    [filters.endDate]
   );
 
   const handleClearDates = useCallback(() => {
@@ -231,35 +257,28 @@ export function FilterPanel({
               Transaction Type
             </Text>
             <View className="flex-row gap-2">
-              {[
-                { label: "All", value: null },
-                { label: "Expense", value: "EXPENSE" as TransactionType },
-                { label: "Income", value: "INCOME" as TransactionType },
-              ].map((option) => (
-                <Pressable
-                  key={option.label}
-                  onPress={() => handleTypeChange(option.value)}
-                  className={`flex-1 py-2 px-3 rounded-xl items-center ${
-                    filters.transactionType === option.value
-                      ? "bg-primary"
-                      : "bg-gray-100"
-                  }`}
-                  accessibilityRole="radio"
-                  accessibilityState={{
-                    checked: filters.transactionType === option.value,
-                  }}
-                >
-                  <Text
-                    className={`text-sm font-medium ${
-                      filters.transactionType === option.value
-                        ? "text-white"
-                        : "text-gray-700"
+              {TRANSACTION_TYPE_OPTIONS.map((option) => {
+                const isSelected = filters.transactionType === option.value;
+                return (
+                  <Pressable
+                    key={option.label}
+                    onPress={() => handleTypeChange(option.value)}
+                    className={`flex-1 py-2 px-3 rounded-xl items-center ${
+                      isSelected ? "bg-primary" : "bg-gray-100"
                     }`}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: isSelected }}
                   >
-                    {option.label}
-                  </Text>
-                </Pressable>
-              ))}
+                    <Text
+                      className={`text-sm font-medium ${
+                        isSelected ? "text-white" : "text-gray-700"
+                      }`}
+                    >
+                      {option.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </View>
           </View>
 
@@ -548,10 +567,9 @@ export function FilterPanel({
               </Pressable>
             </View>
             <View className="p-4">
-              <DatePicker
-                value={filters.startDate || new Date()}
+              <InlineCalendar
+                value={startDateValue}
                 onChange={handleStartDateChange}
-                label=""
                 maxDate={filters.endDate || undefined}
               />
             </View>
@@ -589,10 +607,9 @@ export function FilterPanel({
               </Pressable>
             </View>
             <View className="p-4">
-              <DatePicker
-                value={filters.endDate || new Date()}
+              <InlineCalendar
+                value={endDateValue}
                 onChange={handleEndDateChange}
-                label=""
                 minDate={filters.startDate || undefined}
               />
             </View>
