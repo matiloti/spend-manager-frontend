@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -65,6 +66,7 @@ export function useAccount(
 
 /**
  * Hook to fetch the active account
+ * Syncs the local Zustand store with the backend active account
  */
 export function useActiveAccount(
   options?: Omit<
@@ -72,11 +74,22 @@ export function useActiveAccount(
     "queryKey" | "queryFn"
   >
 ) {
-  return useQuery({
+  const { setActiveAccount, activeAccountId } = useAccountStore();
+
+  const query = useQuery({
     queryKey: accountKeys.active(),
     queryFn: () => accountService.getActive(),
     ...options,
   });
+
+  // Sync the local store with the fetched active account
+  useEffect(() => {
+    if (query.data && query.data.id !== activeAccountId) {
+      setActiveAccount(query.data.id);
+    }
+  }, [query.data, activeAccountId, setActiveAccount]);
+
+  return query;
 }
 
 /**
