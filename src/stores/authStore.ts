@@ -17,6 +17,7 @@ interface AuthState {
 
   // Actions
   setAuth: (user: AuthUser, tokens: AuthTokens) => Promise<void>;
+  updateUser: (partialUser: Partial<AuthUser>) => void;
   clearAuth: () => Promise<void>;
   setLoading: (loading: boolean) => void;
   initializeAuth: () => Promise<void>;
@@ -51,6 +52,13 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       isAuthenticated: true,
       isLoading: false,
     });
+  },
+
+  // Update user data (partial update for profile changes)
+  updateUser: (partialUser: Partial<AuthUser>) => {
+    set((state) => ({
+      user: state.user ? { ...state.user, ...partialUser } : null,
+    }));
   },
 
   // Clear authentication state on logout

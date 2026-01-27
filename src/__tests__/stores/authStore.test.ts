@@ -131,6 +131,63 @@ describe("authStore", () => {
     });
   });
 
+  describe("updateUser", () => {
+    it("updates user name while preserving other fields", async () => {
+      // First set auth
+      await useAuthStore.getState().setAuth(mockUser, mockTokens);
+
+      // Update only the name
+      useAuthStore.getState().updateUser({ name: "Updated Name" });
+
+      const state = useAuthStore.getState();
+      expect(state.user).toEqual({
+        ...mockUser,
+        name: "Updated Name",
+      });
+    });
+
+    it("updates user email while preserving other fields", async () => {
+      await useAuthStore.getState().setAuth(mockUser, mockTokens);
+
+      useAuthStore.getState().updateUser({ email: "updated@example.com" });
+
+      const state = useAuthStore.getState();
+      expect(state.user?.email).toBe("updated@example.com");
+      expect(state.user?.name).toBe(mockUser.name);
+    });
+
+    it("updates multiple fields at once", async () => {
+      await useAuthStore.getState().setAuth(mockUser, mockTokens);
+
+      useAuthStore.getState().updateUser({
+        name: "New Name",
+        updatedAt: "2026-01-27T12:00:00Z",
+      });
+
+      const state = useAuthStore.getState();
+      expect(state.user?.name).toBe("New Name");
+      expect(state.user?.updatedAt).toBe("2026-01-27T12:00:00Z");
+    });
+
+    it("does nothing if user is null", () => {
+      // User is null by default
+      useAuthStore.getState().updateUser({ name: "Should Not Set" });
+
+      const state = useAuthStore.getState();
+      expect(state.user).toBeNull();
+    });
+
+    it("does not affect authentication state", async () => {
+      await useAuthStore.getState().setAuth(mockUser, mockTokens);
+
+      useAuthStore.getState().updateUser({ name: "New Name" });
+
+      const state = useAuthStore.getState();
+      expect(state.isAuthenticated).toBe(true);
+      expect(state.accessToken).toBe(mockTokens.accessToken);
+    });
+  });
+
   describe("clearAuth", () => {
     it("clears user and tokens", async () => {
       // First set auth

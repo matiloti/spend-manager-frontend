@@ -528,7 +528,7 @@ function PhotoOptionsModal({ visible, onClose }: PhotoOptionsModalProps) {
 
 export default function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
-  const [loading, setLoading] = useState(false);
+  const updateUser = useAuthStore((state) => state.updateUser);
   const [refreshing, setRefreshing] = useState(false);
 
   // Modal visibility states
@@ -547,8 +547,7 @@ export default function ProfileScreen() {
     try {
       const profile = await authService.getProfile();
       // Update the auth store with fresh profile data
-      // Note: The store doesn't have a direct setUser method,
-      // so we rely on the data being updated through the auth flow
+      updateUser(profile);
     } catch (error) {
       console.error("Failed to refresh profile:", error);
     } finally {
@@ -559,8 +558,8 @@ export default function ProfileScreen() {
   // Handle name update
   const handleUpdateName = async (newName: string) => {
     const updatedUser = await authService.updateProfile({ name: newName });
-    // The auth store should be updated through the API interceptor or manually
-    // For now, we'll just show success - a full implementation would update the store
+    // Sync the updated user data with the auth store
+    updateUser(updatedUser);
     Alert.alert("Success", "Your display name has been updated.");
   };
 
