@@ -209,6 +209,20 @@ jest.mock("expo-haptics", () => ({
   },
 }));
 
+// Mock expo-notifications
+jest.mock("expo-notifications", () => ({
+  getPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ status: "undetermined", canAskAgain: true })
+  ),
+  requestPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ status: "granted", canAskAgain: true })
+  ),
+  setNotificationHandler: jest.fn(),
+  scheduleNotificationAsync: jest.fn(() => Promise.resolve("notification-id")),
+  cancelScheduledNotificationAsync: jest.fn(() => Promise.resolve()),
+  cancelAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve()),
+}));
+
 // Mock victory-native charts
 jest.mock("victory-native", () => {
   const mockReact = require("react");

@@ -36,6 +36,7 @@ export default function RootLayout() {
           <Stack.Screen name="transactions/create" options={{ headerShown: false }} />
           <Stack.Screen name="transactions/[id]/index" options={{ headerShown: false }} />
           <Stack.Screen name="transactions/[id]/edit" options={{ headerShown: false }} />
+          <Stack.Screen name="settings/notifications" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </QueryClientProvider>
