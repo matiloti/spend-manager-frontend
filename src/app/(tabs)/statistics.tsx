@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { View, Text, ScrollView, RefreshControl, SafeAreaView } from "react-native";
 import { Hash, Calendar } from "lucide-react-native";
 import { useStatisticsOverview, useTimeSeries } from "@/hooks/api/useStatistics";
@@ -7,6 +7,7 @@ import { DateRangePreset } from "@/services/statisticsService";
 import { formatCurrency } from "@/utils/formatters";
 import {
   DateRangeSelector,
+  DateRangeSelectorRef,
   AccountFilter,
   KPICard,
   SecondaryKPICard,
@@ -20,6 +21,9 @@ import {
 } from "@/components/statistics";
 
 export default function StatisticsScreen() {
+  // Ref for DateRangeSelector to allow opening custom picker from empty state
+  const dateRangeSelectorRef = useRef<DateRangeSelectorRef>(null);
+
   // Filter state
   const [selectedPreset, setSelectedPreset] = useState<DateRangePreset>("THIS_MONTH");
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
@@ -67,6 +71,11 @@ export default function StatisticsScreen() {
     setCustomEndDate(endDate);
   };
 
+  // Handler for "Change Date Range" button in empty state
+  const handleChangeDateRange = useCallback(() => {
+    dateRangeSelectorRef.current?.openCustomPicker();
+  }, []);
+
   // Loading state
   if (isLoadingOverview && !overview) {
     return (
@@ -109,6 +118,7 @@ export default function StatisticsScreen() {
       {/* Filters (sticky) */}
       <View className="px-4 bg-bg-primary">
         <DateRangeSelector
+          ref={dateRangeSelectorRef}
           selectedPreset={selectedPreset}
           onPresetChange={setSelectedPreset}
           customStartDate={customStartDate}
@@ -129,9 +139,7 @@ export default function StatisticsScreen() {
 
       {!hasData ? (
         <StatisticsEmptyState
-          onChangeDateRange={() => {
-            // Could trigger the date picker modal
-          }}
+          onChangeDateRange={handleChangeDateRange}
         />
       ) : (
         <ScrollView

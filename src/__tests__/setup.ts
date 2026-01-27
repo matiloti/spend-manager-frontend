@@ -1,4 +1,4 @@
-import "@testing-library/jest-native/extend-expect";
+import "@testing-library/react-native/extend-expect";
 
 // Mock expo-router
 jest.mock("expo-router", () => ({
@@ -165,6 +165,20 @@ jest.mock("nativewind", () => ({
   styled: (component: unknown) => component,
   useColorScheme: () => ({ colorScheme: "light", setColorScheme: jest.fn() }),
 }));
+
+// Mock @react-native-community/datetimepicker
+jest.mock("@react-native-community/datetimepicker", () => {
+  const mockReact = require("react");
+  const mockView = require("react-native").View;
+
+  const DateTimePicker = (props: Record<string, unknown>) =>
+    mockReact.createElement(mockView, { ...props, testID: props.testID || "date-time-picker" });
+
+  return {
+    __esModule: true,
+    default: DateTimePicker,
+  };
+});
 
 // Mock victory-native charts
 jest.mock("victory-native", () => {

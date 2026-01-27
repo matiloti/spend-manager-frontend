@@ -1,4 +1,5 @@
 export { DateRangeSelector } from "./DateRangeSelector";
+export type { DateRangeSelectorRef } from "./DateRangeSelector";
 export { AccountFilter } from "./AccountFilter";
 export { KPICard, SecondaryKPICard } from "./KPICard";
 export { ComparisonCard } from "./ComparisonCard";
